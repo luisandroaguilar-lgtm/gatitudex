@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MED-COMMAND ULTRA v3 | SERUMS & Residentado Médico 2027</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome 6.5.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts: Cabin & Alata -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alata&family=Cabin:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Cabin', 'sans-serif'],
+                        heading: ['Alata', 'sans-serif'],
+                        mono: ['Courier New', 'monospace']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cabin', sans-serif;
+            background-color: #ffffff;
+            color: #0f172a;
+        }
+
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Alata', sans-serif;
+        }
+
+        /* Custom Light Scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0284c7; }
+
+        .sidebar-item-active {
+            background-color: #e0f2fe !important;
+            color: #0369a1 !important;
+            font-weight: 700;
+            border-right: 4px solid #0284c7;
+        }
+
+        @keyframes mascotHover {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+
+        .anime-mascot {
+            animation: mascotHover 3.5s ease-in-out infinite;
+        }
+
+        @keyframes flamePulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px #f97316); }
+            50% { transform: scale(1.15); filter: drop-shadow(0 0 8px #ea580c); }
+        }
+
+        .flame-anim {
+            display: inline-block;
+            animation: flamePulse 1.5s ease-in-out infinite;
+        }
+
+        .calendar-day-tile {
+            min-height: 80px;
+            transition: all 0.2s ease;
+        }
+        .calendar-day-tile:hover {
+            background-color: #f0f9ff;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col antialiased bg-white text-slate-900">
+
+    <!-- TOP BAR HEADER -->
+    <header class="h-14 bg-white border-b border-slate-200 px-4 flex items-center justify-between z-30 sticky top-0 shrink-0">
+        <!-- Left Title & Mobile Menu Toggle -->
+        <div class="flex items-center space-x-3">
+            <button onclick="toggleMobileSidebar()" class="lg:hidden text-slate-600 hover:text-slate-900 p-1.5 rounded-lg border border-slate-200">
+                <i class="fa-solid fa-bars text-base"></i>
+            </button>
+            
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 rounded-xl bg-sky-600 text-white flex items-center justify-center font-heading text-sm shadow-md shadow-sky-200">
+                    <i class="fa-solid fa-user-md"></i>
+                </div>
+                <div>
+                    <h1 class="font-heading font-bold text-sm text-slate-900 tracking-tight leading-none flex items-center gap-1.5">
+                        MED-COMMAND <span class="text-[10px] bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-mono font-bold">v3.0 LIGHT</span>
+                    </h1>
+                    <p class="text-[11px] text-slate-500 font-medium">Dr. Luis Aguilar • P.S. Paucamarca & RM 2027</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Greeting & Date -->
+        <div class="hidden md:flex items-center space-x-2 text-xs font-medium text-slate-600 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
+            <i class="fa-solid fa-sun text-amber-500"></i>
+            <span id="topBarGreeting">Buenas tardes</span>, Dr. Luis
+            <span class="text-slate-300">|</span>
+            <span id="topBarDate" class="font-mono text-slate-700">--</span>
+        </div>
+
+        <!-- Right Quick Toolbar -->
+        <div class="flex items-center space-x-2">
+            <button onclick="exportJSON()" title="Exportar Backup" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl border border-slate-300 flex items-center space-x-1.5 transition-all">
+                <i class="fa-solid fa-download text-sky-600"></i>
+                <span class="hidden sm:inline">Exportar JSON</span>
+            </button>
+
+            <label title="Importar Backup" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl border border-slate-300 flex items-center space-x-1.5 cursor-pointer transition-all">
+                <i class="fa-solid fa-upload text-purple-600"></i>
+                <span class="hidden sm:inline">Importar</span>
+                <input type="file" id="jsonInput" onchange="importJSON(event)" accept=".json" class="hidden">
+            </label>
+
+            <!-- RM 2027 Countdown Ticker -->
+            <div class="bg-sky-50 border border-sky-200 px-3 py-1 rounded-xl text-xs flex items-center space-x-1.5">
+                <i class="fa-solid fa-graduation-cap text-sky-600"></i>
+                <span class="font-bold text-sky-900 font-mono" id="topRmCountdown">-- días</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2-COLUMN MAIN LAYOUT CONTAINER -->
+    <div class="flex-1 flex min-h-0 overflow-hidden relative">
+
+        <!-- LEFT NAVIGATION SIDEBAR (Google Drive / Facebook Style) -->
+        <aside id="appSidebar" class="w-64 bg-slate-50 border-r border-slate-200 flex flex-col justify-between shrink-0 absolute lg:static inset-y-0 left-0 z-20 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+            
+            <div class="p-3 space-y-4 overflow-y-auto">
+
+                <!-- Anime Mascot Banner Widget -->
+                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                    <div class="relative w-12 h-12 shrink-0">
+                        <!-- SVG Anime Mascot -->
+                        <svg class="w-full h-full anime-mascot cursor-pointer" viewBox="0 0 100 100" onclick="triggerMascotClick()">
+                            <circle cx="50" cy="50" r="46" fill="#f0f9ff" stroke="#0284c7" stroke-width="3"/>
+                            <!-- Hair -->
+                            <path d="M 25 45 Q 50 15 75 45 Q 80 25 50 20 Q 20 25 25 45 Z" fill="#0369a1"/>
+                            <!-- Face -->
+                            <circle cx="50" cy="52" r="26" fill="#fef3c7"/>
+                            <!-- Eyes -->
+                            <ellipse cx="40" cy="50" rx="4" ry="6" fill="#0f172a"/>
+                            <ellipse cx="60" cy="50" rx="4" ry="6" fill="#0f172a"/>
+                            <circle cx="41" cy="48" r="1.5" fill="#ffffff"/>
+                            <circle cx="61" cy="48" r="1.5" fill="#ffffff"/>
+                            <!-- Glasses -->
+                            <rect x="33" y="44" width="14" height="12" rx="3" fill="none" stroke="#0284c7" stroke-width="2"/>
+                            <rect x="53" y="44" width="14" height="12" rx="3" fill="none" stroke="#0284c7" stroke-width="2"/>
+                            <line x1="47" y1="50" x2="53" y2="50" stroke="#0284c7" stroke-width="2"/>
+                            <!-- Blush & Smile -->
+                            <circle cx="34" cy="56" r="3" fill="#f43f5e" opacity="0.4"/>
+                            <circle cx="66" cy="56" r="3" fill="#f43f5e" opacity="0.4"/>
+                            <path d="M 44 60 Q 50 65 56 60" fill="none" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="text-[10px] font-bold uppercase tracking-wider text-sky-600">Asistente SERUMS</div>
+                        <div class="text-xs font-bold text-slate-800">¡Hola, Luis!</div>
+                        <div class="text-[11px] text-slate-500 font-medium">Click en la mascota para motivación</div>
+                    </div>
+                </div>
+
+                <!-- Daily Streak Badge -->
+                <div class="bg-gradient-to-r from-orange-500 to-amber-500 p-3 rounded-2xl text-white shadow-sm flex items-center justify-between">
+                    <div class="flex items-center space-x-2.5">
+                        <span class="text-2xl flame-anim">🔥</span>
+                        <div>
+                            <div class="text-[10px] font-bold uppercase tracking-wider text-orange-100">Racha Diaria</div>
+                            <div class="text-sm font-bold font-mono"><span id="sidebarStreakCount">1</span> Días Consecutivos</div>
+                        </div>
+                    </div>
+                    <button onclick="doDailyCheckin()" class="px-2 py-1 bg-white hover:bg-orange-50 text-orange-600 font-bold text-[10px] rounded-lg shadow transition-all">Check-in</button>
+                </div>
+
+                <!-- Navigation List -->
+                <nav class="space-y-1">
+                    <button onclick="showTab('tab-inicio')" id="btn-tab-inicio" class="sidebar-btn sidebar-item-active w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-700 hover:bg-slate-200/60 transition-all">
+                        <i class="fa-solid fa-house text-sky-600 w-5"></i>
+                        <span>Inicio & Racha</span>
+                    </button>
+
+                    <button onclick="showTab('tab-calendario')" id="btn-tab-calendario" class="sidebar-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-700 hover:bg-slate-200/60 transition-all">
+                        <i class="fa-solid fa-calendar-days text-purple-600 w-5"></i>
+                        <span>Calendario & Eventos</span>
+                    </button>
+
+                    <button onclick="showTab('tab-graficas')" id="btn-tab-graficas" class="sidebar-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-700 hover:bg-slate-200/60 transition-all">
+                        <i class="fa-solid fa-chart-line text-emerald-600 w-5"></i>
+                        <span>Gráficas de Evolución</span>
+                    </button>
+
+                    <button onclick="showTab('tab-pacientes')" id="btn-tab-pacientes" class="sidebar-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium text-slate-700 hover:bg-slate-200/60 transition-all">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-users text-blue-600 w-5"></i>
+                            <span>Agenda de Pacientes</span>
+                        </div>
+                        <span id="badgePatientsCount" class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full font-mono">0</span>
+                    </button>
+
+                    <button onclick="showTab('tab-finanzas')" id="btn-tab-finanzas" class="sidebar-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-700 hover:bg-slate-200/60 transition-all">
+                        <i class="fa-solid fa-wallet text-amber-600 w-5"></i>
+                        <span>Finanzas SERUMS</span>
+                    </button>
+
+                    <button onclick="showTab('tab-eisenhower')" id="btn-tab-eisenhower" class="sidebar-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-700 hover:bg-slate-200/60 transition-all">
+                        <i class="fa-solid fa-border-all text-indigo-600 w-5"></i>
+                        <span>Matriz de Eisenhower</span>
+                    </button>
+
+                    <button onclick="showTab('tab-minsa')" id="btn-tab-minsa" class="sidebar-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-700 hover:bg-slate-200/60 transition-all">
+                        <i class="fa-solid fa-hospital text-rose-600 w-5"></i>
+                        <span>MINSA & Emergencias</span>
+                    </button>
+                </nav>
+
+            </div>
+
+            <!-- Sidebar Footer -->
+            <div class="p-3 border-t border-slate-200 text-[11px] text-slate-500 flex items-center justify-between">
+                <span>P.S. Paucamarca</span>
+                <span class="text-emerald-600 font-bold"><i class="fa-solid fa-circle text-[8px]"></i> Online</span>
+            </div>
+
+        </aside>
+
+        <!-- MAIN WORKSPACE CONTENT AREA -->
+        <main class="flex-1 bg-white overflow-y-auto p-4 md:p-6 min-w-0">
+
+            <!-- ========================================== -->
+            <!-- SECTION 1: INICIO & RACHA (DASHBOARD)      -->
+            <!-- ========================================== -->
+            <section id="tab-inicio" class="tab-panel space-y-6">
+
+                <!-- Welcome Banner -->
+                <div class="bg-slate-50 border border-slate-200 rounded-3xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-14 h-14 rounded-2xl bg-orange-100 border border-orange-200 flex items-center justify-center text-3xl">
+                            <span class="flame-anim">🔥</span>
+                        </div>
+                        <div>
+                            <span class="text-[11px] uppercase font-bold text-orange-600 tracking-wider">Centro de Control Diario</span>
+                            <h2 class="text-xl sm:text-2xl font-bold font-heading text-slate-900">¡<span id="dashStreakDays">1</span> días de racha consecutivos!</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">Gestión asistencial Paucamarca & Preparación RM 2027</p>
+                        </div>
+                    </div>
+
+                    <button onclick="doDailyCheckin()" class="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-xs rounded-2xl shadow-md transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-fire"></i>
+                        <span>COMPLETAR CHECK-IN HOY</span>
+                    </button>
+                </div>
+
+                <!-- Habits Tracker Form Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    
+                    <!-- 1. Study Hours -->
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-purple-700 uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-book-open text-purple-600"></i> Horas de Estudio Hoy
+                            </span>
+                            <span id="studyHoursVal" class="font-mono font-bold text-slate-900 text-sm">4 hrs</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" id="inputStudyHours" step="0.5" min="0" max="24" value="4" class="w-full bg-white text-slate-900 text-xs px-3 py-2 rounded-xl border border-slate-300 font-mono">
+                            <button onclick="saveHabitData()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold rounded-xl transition-all">Guardar</button>
+                        </div>
+                        <p class="text-[11px] text-slate-500">Meta recomendada: 3 a 5 horas/día (Banqueo RM).</p>
+                    </div>
+
+                    <!-- 2. Sleep Tracker -->
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-sky-700 uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-bed text-sky-600"></i> Registro de Sueño
+                            </span>
+                            <span id="sleepSummaryText" class="font-mono font-bold text-sky-800 text-xs">7.5 hrs descanso</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div>
+                                <label class="text-[10px] text-slate-500 block mb-1 font-semibold">Hora de Dormir</label>
+                                <input type="time" id="inputSleepTime" value="23:00" onchange="saveHabitData()" class="bg-white text-slate-900 text-xs px-2 py-1.5 rounded-xl border border-slate-300 w-full">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 block mb-1 font-semibold">Hora de Levantar</label>
+                                <input type="time" id="inputWakeTime" value="06:30" onchange="saveHabitData()" class="bg-white text-slate-900 text-xs px-2 py-1.5 rounded-xl border border-slate-300 w-full">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Water Intake -->
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-cyan-700 uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-glass-water text-cyan-600"></i> Vasos de Agua
+                            </span>
+                            <span class="font-mono font-bold text-cyan-800 text-xs"><span id="waterCountText">4</span> / 8 vasos</span>
+                        </div>
+                        <div class="flex items-center justify-between bg-white p-2 rounded-xl border border-slate-200">
+                            <button onclick="updateWater(-1)" class="w-8 h-8 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-bold text-sm flex items-center justify-center">-</button>
+                            <div id="waterGlassesContainer" class="flex space-x-1.5 text-cyan-500 text-sm overflow-x-auto px-1">
+                                <!-- JS Water icons -->
+                            </div>
+                            <button onclick="updateWater(1)" class="w-8 h-8 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg font-bold text-sm flex items-center justify-center">+</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Quick Overview Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Today Patients Preview -->
+                    <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                            <h3 class="font-bold font-heading text-xs text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-user-clock text-blue-600"></i> Próximas Citas en Agenda
+                            </h3>
+                            <button onclick="showTab('tab-pacientes')" class="text-xs text-sky-600 hover:underline font-semibold">Ver Agenda Completa &rarr;</button>
+                        </div>
+                        <div id="dashPatientsPreviewList" class="space-y-2">
+                            <!-- JS Populated -->
+                        </div>
+                    </div>
+
+                    <!-- Quick Reminders Preview -->
+                    <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                            <h3 class="font-bold font-heading text-xs text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-bell text-rose-600"></i> Recordatorios Destacados
+                            </h3>
+                            <button onclick="showTab('tab-calendario')" class="text-xs text-sky-600 hover:underline font-semibold">Ir al Calendario &rarr;</button>
+                        </div>
+                        <div id="dashRemindersPreviewList" class="space-y-2">
+                            <!-- JS Populated -->
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- ========================================== -->
+            <!-- SECTION 2: CALENDARIO DE EVENTOS REAL      -->
+            <!-- ========================================== -->
+            <section id="tab-calendario" class="tab-panel hidden space-y-6">
+
+                <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-4">
+                    
+                    <!-- Calendar Header Controls -->
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 border-b border-slate-200 pb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center text-lg font-bold">
+                                <i class="fa-solid fa-calendar-days"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-base font-bold font-heading text-slate-900" id="calendarMonthTitle">Noviembre 2026</h2>
+                                <p class="text-xs text-slate-500">Agenda interactiva de turnos, guardias y pagos SERUMS</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-2">
+                            <button onclick="prevCalendarMonth()" class="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl border border-slate-300">
+                                <i class="fa-solid fa-chevron-left"></i> Anterior
+                            </button>
+                            <button onclick="nextCalendarMonth()" class="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl border border-slate-300">
+                                Siguiente <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                            <button onclick="openAddEventModal()" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold rounded-xl shadow-sm">
+                                <i class="fa-solid fa-plus"></i> Nuevo Evento
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Calendar Grid Header Days -->
+                    <div class="grid grid-cols-7 gap-1 text-center font-bold text-xs text-slate-600 py-1 bg-slate-200/60 rounded-xl">
+                        <div>Dom</div><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div>
+                    </div>
+
+                    <!-- Calendar Grid Days Tiles -->
+                    <div id="calendarGrid" class="grid grid-cols-7 gap-1.5">
+                        <!-- JS Rendered calendar tiles -->
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- ========================================== -->
+            <!-- SECTION 3: GRÁFICAS DE EVOLUCIÓN HISTÓRICA -->
+            <!-- ========================================== -->
+            <section id="tab-graficas" class="tab-panel hidden space-y-6">
+
+                <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                    <div>
+                        <h2 class="text-base font-bold font-heading text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-area text-emerald-600"></i> Gráficas de Evolución (Progreso Temporal)
+                        </h2>
+                        <p class="text-xs text-slate-500">Tendencias acumuladas de tus métricas personales y financieras</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- Chart 1: Study Hours Trend -->
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-xs text-slate-800 uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-book-open text-purple-600"></i> Horas de Estudio (Últimos 7 días)
+                            </h3>
+                            <span class="text-xs font-mono text-purple-700 font-bold">RM 2027</span>
+                        </div>
+                        <div class="h-48 bg-white rounded-xl border border-slate-200 p-2 flex items-center justify-center">
+                            <canvas id="chartStudy" class="w-full h-full"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Chart 2: Sleep & Wake Time -->
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-xs text-slate-800 uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-bed text-sky-600"></i> Horas de Sueño Descansadas
+                            </h3>
+                            <span class="text-xs font-mono text-sky-700 font-bold">Descanso</span>
+                        </div>
+                        <div class="h-48 bg-white rounded-xl border border-slate-200 p-2 flex items-center justify-center">
+                            <canvas id="chartSleep" class="w-full h-full"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Chart 3: Water Intake -->
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-xs text-slate-800 uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-glass-water text-cyan-600"></i> Vasos de Agua Diarios
+                            </h3>
+                            <span class="text-xs font-mono text-cyan-700 font-bold">Hidratación</span>
+                        </div>
+                        <div class="h-48 bg-white rounded-xl border border-slate-200 p-2 flex items-center justify-center">
+                            <canvas id="chartWater" class="w-full h-full"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Chart 4: Financial Savings Trend -->
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-xs text-slate-800 uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-vault text-emerald-600"></i> Balance y Ahorro Acumulado (S/)
+                            </h3>
+                            <span class="text-xs font-mono text-emerald-700 font-bold">SERUMS</span>
+                        </div>
+                        <div class="h-48 bg-white rounded-xl border border-slate-200 p-2 flex items-center justify-center">
+                            <canvas id="chartSavings" class="w-full h-full"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- ========================================== -->
+            <!-- SECTION 4: AGENDA DE PACIENTES SERUMS      -->
+            <!-- ========================================== -->
+            <section id="tab-pacientes" class="tab-panel hidden space-y-6">
+
+                <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-4">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
+                        <div>
+                            <h2 class="text-base font-bold font-heading text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-users text-blue-600"></i> Agenda de Pacientes & Control Asistencial (Paucamarca)
+                            </h2>
+                            <p class="text-xs text-slate-500">Retiro de puntos faciales, CPN, CRED, dosaje de Hb</p>
+                        </div>
+                        <div class="w-full sm:w-64 relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                            <input type="text" id="patientSearch" onkeyup="renderPatientsTable()" placeholder="Buscar por paciente o DNI..." class="w-full bg-white text-xs text-slate-900 pl-9 pr-3 py-2 rounded-xl border border-slate-300">
+                        </div>
+                    </div>
+
+                    <!-- Add Patient Form -->
+                    <form id="addPatientForm" onsubmit="addPatientRecord(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-3 bg-white p-4 rounded-xl border border-slate-200">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Nombre Paciente</label>
+                            <input type="text" id="pName" required placeholder="Ej. Juan Pérez (Pediátrico)" class="w-full bg-slate-50 text-xs text-slate-900 px-3 py-2 rounded-xl border border-slate-300">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">DNI Paciente</label>
+                            <input type="text" id="pDni" maxLength="8" placeholder="8 dígitos" class="w-full bg-slate-50 text-xs text-slate-900 px-3 py-2 rounded-xl border border-slate-300">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Fecha Prevista Cita</label>
+                            <input type="date" id="pDate" required class="w-full bg-slate-50 text-xs text-slate-900 px-3 py-2 rounded-xl border border-slate-300">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Acción / Recordatorio</label>
+                            <input type="text" id="pAction" required placeholder="Ej. Retiro de puntos faciales (Día 4)" class="w-full bg-slate-50 text-xs text-slate-900 px-3 py-2 rounded-xl border border-slate-300">
+                        </div>
+                        <div class="sm:col-span-4 flex justify-end">
+                            <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-xl shadow-sm flex items-center space-x-1.5">
+                                <i class="fa-solid fa-user-plus text-xs"></i>
+                                <span>Agregar a la Agenda</span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Table -->
+                    <div class="overflow-x-auto bg-white rounded-xl border border-slate-200">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-100 text-slate-600 font-bold uppercase text-[10px] border-b border-slate-200">
+                                <tr>
+                                    <th class="py-3 px-3">Paciente</th>
+                                    <th class="py-3 px-3">DNI</th>
+                                    <th class="py-3 px-3">Fecha Cita</th>
+                                    <th class="py-3 px-3">Acción / Procedimiento</th>
+                                    <th class="py-3 px-3 text-center">Estado</th>
+                                    <th class="py-3 px-3 text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="patientsTableBody" class="divide-y divide-slate-200">
+                                <!-- JS Populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- ========================================== -->
+            <!-- SECTION 5: FINANZAS CATEGORIZADAS SERUMS  -->
+            <!-- ========================================== -->
+            <section id="tab-finanzas" class="tab-panel hidden space-y-6">
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-money-bill-trend-up"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-500 font-medium">Ingresos Totales</div>
+                            <div id="finIncomeVal" class="text-lg font-bold font-mono text-emerald-700">S/ 0.00</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-money-bill-transfer"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-500 font-medium">Gastos Totales</div>
+                            <div id="finExpenseVal" class="text-lg font-bold font-mono text-rose-700">S/ 0.00</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-700 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-vault"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-500 font-medium">Balance Neto Libre</div>
+                            <div id="finBalanceVal" class="text-lg font-bold font-mono text-sky-700">S/ 0.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-4">
+                        <h3 class="font-bold font-heading text-xs text-slate-800 uppercase flex items-center gap-2 border-b border-slate-200 pb-2">
+                            <i class="fa-solid fa-plus-circle text-amber-600"></i> Registrar Transacción
+                        </h3>
+                        <form id="addTxForm" onsubmit="addTxRecord(event)" class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Descripción</label>
+                                <input type="text" id="txDesc" required placeholder="Ej. Cuarto Paucamarca / Plan Bitel" class="w-full bg-white text-xs text-slate-900 px-3 py-2 rounded-xl border border-slate-300">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Monto (S/)</label>
+                                    <input type="number" step="0.5" id="txAmount" required placeholder="150" class="w-full bg-white text-xs text-slate-900 font-mono px-3 py-2 rounded-xl border border-slate-300">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Tipo</label>
+                                    <select id="txType" class="w-full bg-white text-xs text-slate-900 px-3 py-2 rounded-xl border border-slate-300">
+                                        <option value="expense">Gasto (-)</option>
+                                        <option value="income">Ingreso (+)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Categoría</label>
+                                <select id="txCat" class="w-full bg-white text-xs text-slate-900 px-3 py-2 rounded-xl border border-slate-300">
+                                    <option value="Alimentación">Alimentación / Cuarto Paucamarca</option>
+                                    <option value="Transporte">Transporte (San Marcos/Cajamarca)</option>
+                                    <option value="Servicios">Servicios / Teléfono (Bitel)</option>
+                                    <option value="Salud">Salud / Personal</option>
+                                    <option value="Gustos">Gustos / Ocio</option>
+                                    <option value="Sueldo">Sueldo SERUMS MINSA</option>
+                                    <option value="Cursos">Cursos RM 2027</option>
+                                    <option value="Otros">Otros</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs rounded-xl shadow-sm">
+                                Guardar Transacción
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-4 lg:col-span-2">
+                        <h3 class="font-bold font-heading text-xs text-slate-800 uppercase border-b border-slate-200 pb-2">
+                            Distribución de Gastos por Categoría
+                        </h3>
+                        <div id="categoryBarsContainer" class="space-y-2.5">
+                            <!-- JS populated bars -->
+                        </div>
+
+                        <div class="pt-3 border-t border-slate-200">
+                            <h4 class="text-xs font-bold text-slate-700 mb-2">Historial de Transacciones</h4>
+                            <div class="max-h-44 overflow-y-auto space-y-2" id="txHistoryContainer">
+                                <!-- JS Tx Items -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- ========================================== -->
+            <!-- SECTION 6: MATRIZ DE EISENHOWER            -->
+            <!-- ========================================== -->
+            <section id="tab-eisenhower" class="tab-panel hidden space-y-6">
+
+                <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                    <div>
+                        <h2 class="text-base font-bold font-heading text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-border-all text-indigo-600"></i> Matriz de Eisenhower (Priorización)
+                        </h2>
+                        <p class="text-xs text-slate-500">Clasifica tus pendientes del Puesto de Salud y tu preparación para el RM 2027</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Q1 -->
+                    <div class="bg-slate-50 rounded-2xl p-4 border-l-4 border-l-rose-500 border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-xs text-rose-700 uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-exclamation"></i> 1. Urgente e Importante (Hacer YA)
+                            </h3>
+                            <button onclick="addMatrixItem('q1')" class="text-xs text-rose-600 hover:text-rose-800"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        <div id="matrix-q1" class="space-y-2 min-h-[120px]"></div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="bg-slate-50 rounded-2xl p-4 border-l-4 border-l-purple-500 border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-xs text-purple-700 uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-calendar-plus"></i> 2. Importante, no Urgente (Planificar RM 2027)
+                            </h3>
+                            <button onclick="addMatrixItem('q2')" class="text-xs text-purple-600 hover:text-purple-800"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        <div id="matrix-q2" class="space-y-2 min-h-[120px]"></div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="bg-slate-50 rounded-2xl p-4 border-l-4 border-l-amber-500 border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-xs text-amber-700 uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-user-gear"></i> 3. Urgente, no Importante (Delegar / Trámites)
+                            </h3>
+                            <button onclick="addMatrixItem('q3')" class="text-xs text-amber-600 hover:text-amber-800"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        <div id="matrix-q3" class="space-y-2 min-h-[120px]"></div>
+                    </div>
+
+                    <!-- Q4 -->
+                    <div class="bg-slate-50 rounded-2xl p-4 border-l-4 border-l-slate-400 border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-xs text-slate-700 uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-trash-can"></i> 4. Ni Urgente ni Importante (Eliminar)
+                            </h3>
+                            <button onclick="addMatrixItem('q4')" class="text-xs text-slate-600 hover:text-slate-800"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        <div id="matrix-q4" class="space-y-2 min-h-[120px]"></div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- ========================================== -->
+            <!-- SECTION 7: MINSA & EMERGENCIAS             -->
+            <!-- ========================================== -->
+            <section id="tab-minsa" class="tab-panel hidden space-y-6">
+
+                <!-- MINSA Portal Cards -->
+                <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-4">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
+                        <div>
+                            <h2 class="text-base font-bold font-heading text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-hospital text-rose-600"></i> Portal de Accesos MINSA (RIS San Marcos)
+                            </h2>
+                            <p class="text-xs text-slate-500">Teleatiendo, REFCON, SIHCE, Anemia, REUNIS y SUSALUD</p>
+                        </div>
+                        <div class="w-full sm:w-64 relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                            <input type="text" id="minsaSearch" onkeyup="renderMinsaCards()" placeholder="Buscar plataforma..." class="w-full bg-white text-xs text-slate-900 pl-9 pr-3 py-2 rounded-xl border border-slate-300">
+                        </div>
+                    </div>
+
+                    <div id="minsaCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- JS Cards -->
+                    </div>
+                </div>
+
+                <!-- Pediatric Dosage & HIS Codes -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-4 lg:col-span-2">
+                        <h3 class="font-bold font-heading text-xs text-slate-800 uppercase flex items-center gap-2 border-b border-slate-200 pb-2">
+                            <i class="fa-solid fa-syringe text-sky-600"></i> Dosificación Pediátrica & Hidratación SRO (MINSA)
+                        </h3>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white p-3.5 rounded-xl border border-slate-200">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Peso Paciente (kg)</label>
+                                <input type="number" id="pedWeight" step="0.5" value="10" oninput="runPediatricCalc()" class="w-full bg-slate-50 text-xs text-slate-900 font-mono font-bold px-3 py-2 rounded-xl border border-slate-300">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Fármaco a Dosificar</label>
+                                <select id="pedDrug" onchange="runPediatricCalc()" class="w-full bg-slate-50 text-xs text-slate-900 px-3 py-2 rounded-xl border border-slate-300">
+                                    <option value="paracetamol">Paracetamol Gotas (100mg/ml)</option>
+                                    <option value="ibuprofeno">Ibuprofeno Jarabe (100mg/5ml)</option>
+                                    <option value="amoxicilina">Amoxicilina Jarabe (250mg/5ml)</option>
+                                    <option value="azitromicina">Azitromicina Jarabe (200mg/5ml)</option>
+                                    <option value="hierro">Sulfato Ferroso Gotas (Anemia 3mg/kg/d)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="pedCalcResultCard" class="bg-white p-4 rounded-xl border border-slate-200 space-y-1">
+                            <!-- JS Result -->
+                        </div>
+                    </div>
+
+                    <!-- HIS Code Search -->
+                    <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3">
+                        <h3 class="font-bold font-heading text-xs text-slate-800 uppercase border-b border-slate-200 pb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-barcode text-purple-600"></i> Buscador HIS / CIE-10
+                        </h3>
+                        <input type="text" id="hisSearchInput" onkeyup="renderHisCodes()" placeholder="Buscar por diagnóstico (ej. Anemia)..." class="w-full bg-white text-xs text-slate-900 px-3 py-2 rounded-xl border border-slate-300">
+                        <div class="space-y-2 max-h-56 overflow-y-auto" id="hisCodesContainer">
+                            <!-- JS HIS -->
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Emergency Protocols & Obstetric Claves -->
+                <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-4">
+                    <h3 class="font-bold font-heading text-xs text-slate-800 uppercase border-b border-slate-200 pb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation text-rose-600"></i> Emergencias Médicas & Claves Obstétricas MINSA
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2">
+                            <div class="font-bold text-rose-600 flex justify-between">
+                                <span>⚡ Anafilaxia / Angioedema</span>
+                                <span class="text-[9px] bg-rose-100 px-2 py-0.5 rounded text-rose-700 font-bold">Urgencia</span>
+                            </div>
+                            <p><strong>1. Adrenalina 1:1000 IM:</strong> 0.3-0.5 mg IM en muslo. (Niños: 0.01 mg/kg).</p>
+                            <p><strong>2. Hidrocortisona:</strong> 200-500 mg EV.</p>
+                            <p><strong>3. Clorfenamina:</strong> 10 mg EV o IM.</p>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2">
+                            <div class="font-bold text-rose-600 flex justify-between">
+                                <span>🚨 Clave Roja (Hemorragia Postparto)</span>
+                                <span class="text-[9px] bg-rose-100 px-2 py-0.5 rounded text-rose-700 font-bold">MINSA</span>
+                            </div>
+                            <p><strong>1. Oxitocina:</strong> 10 UI IM o 20-40 UI en 1L NaCl 0.9% a goteo rápido.</p>
+                            <p><strong>2. Ergometrina:</strong> 0.2 mg IM (Contraindicado si HTA).</p>
+                            <p><strong>3. Ácido Tranexámico:</strong> 1 g EV en primeras 3 horas.</p>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2">
+                            <div class="font-bold text-sky-600 flex justify-between">
+                                <span>🔵 Clave Azul (Preeclampsia/Eclampsia)</span>
+                                <span class="text-[9px] bg-sky-100 px-2 py-0.5 rounded text-sky-700 font-bold">Zuspan</span>
+                            </div>
+                            <p><strong>1. Sulfato de Magnesio 20%:</strong> Ataque 4 g EV en 20 min. Mantenimiento 1 g/hora EV.</p>
+                            <p><strong>2. Nifedipino:</strong> 10 mg VO si PA &ge; 160/110 mmHg.</p>
+                            <p><strong>3. Antídoto:</strong> Gluconato de Calcio 10% 1 g EV si tóxico.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- ACHIEVEMENT POPUP MODAL (Frase Solitaria de Logro) -->
+    <div id="achievementModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl transform transition-all scale-95" id="achievementCardInner">
+            
+            <div class="w-20 h-20 mx-auto rounded-3xl bg-amber-100 border border-amber-300 flex items-center justify-center text-4xl shadow-inner">
+                <span class="flame-anim">🏆</span>
+            </div>
+
+            <div>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-orange-600 bg-orange-100 px-2.5 py-1 rounded-full">¡Logro Diario Desbloqueado!</span>
+                <h3 class="text-xl font-bold font-heading text-slate-900 mt-2" id="achieveTitle">¡Excelente Trabajo, Dr. Luis!</h3>
+            </div>
+
+            <!-- Solitary Quote Box -->
+            <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl text-left space-y-2">
+                <p class="text-xs text-slate-700 italic leading-relaxed" id="achieveQuoteText">"Al árbol se le conoce por sus frutos, y al sabio por sus obras."</p>
+                <div class="text-[11px] font-bold text-sky-700 font-mono text-right" id="achieveQuoteAuthor">— Santiago Ramón y Cajal</div>
+            </div>
+
+            <button onclick="closeAchievementModal()" class="w-full py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-xl shadow-md transition-all">
+                Continuar
+            </button>
+
+        </div>
+    </div>
+
+    <!-- MODAL: ADD EVENT TO CALENDAR -->
+    <div id="addEventModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white border border-slate-200 rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                <h3 class="text-sm font-bold font-heading text-slate-900">Agregar Evento al Calendario</h3>
+                <button onclick="closeAddEventModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="saveCalendarEvent(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Título del Evento</label>
+                    <input type="text" id="evTitle" required placeholder="Ej. Guardia P.S. Paucamarca" class="w-full bg-slate-50 text-slate-900 px-3 py-2 rounded-xl border border-slate-300">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Fecha</label>
+                    <input type="date" id="evDate" required class="w-full bg-slate-50 text-slate-900 px-3 py-2 rounded-xl border border-slate-300">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-600 mb-1">Categoría</label>
+                    <select id="evCat" class="w-full bg-slate-50 text-slate-900 px-3 py-2 rounded-xl border border-slate-300">
+                        <option value="guardia">Guardia SERUMS</option>
+                        <option value="pago">Pago / Finanzas</option>
+                        <option value="minsa">Consolidado MINSA</option>
+                        <option value="estudio">Examen / Estudio RM</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeAddEventModal()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl">Cancelar</button>
+                    <button type="submit" class="px-4 py-1.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFIER -->
+    <div id="appToast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 text-xs pointer-events-none">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+        <span id="toastMsg" class="font-medium">Mensaje...</span>
+    </div>
+
+    <!-- CORE JAVASCRIPT LOGIC -->
+    <script>
+        // Inspiring quotes dataset (Solitary Popup)
+        const quotesPool = [
+            { quote: "Al árbol se le conoce por sus frutos, y al sabio por sus obras.", author: "Santiago Ramón y Cajal" },
+            { quote: "La ciencia no es más que el adiestramiento del pensamiento cotidiano.", author: "Albert Einstein" },
+            { quote: "Nada en la vida debe ser temido, solo comprendido.", author: "Marie Curie" },
+            { quote: "La simplicidad es la máxima sofisticación.", author: "Leonardo da Vinci" },
+            { quote: "Lo que no puedo crear, no lo entiendo.", author: "Richard Feynman" }
+        ];
+
+        // Default RIS MINSA Systems dataset
+        const defaultMinsaCards = [
+            { id: 15, title: "TELEATIENDO - MINSA", url: "https://teleatiendo.minsa.gob.pe", desc: "Teleorientación, telemonitoreo y atenciones asistenciales." },
+            { id: 16, title: "REFCON - REFERENCIAS Y CONTRARREFERENCIAS", url: "https://refcon.minsa.gob.pe", desc: "Gestión de referencias entre establecimientos de salud." },
+            { id: 17, title: "SIHCE - HISTORIA CLÍNICA ELECTRÓNICA", url: "https://sihce.minsa.gob.pe", desc: "Registro asistencial electrónico del MINSA." },
+            { id: 18, title: "SEGUIMIENTO NOMINAL DE ANEMIA", url: "https://anemia.minsa.gob.pe", desc: "Monitoreo de tamizaje y tratamiento de anemia infantil." },
+            { id: 19, title: "REUNIS - REPOSITORIO DE INFORMACIÓN", url: "https://www.reunis.minsa.gob.pe", desc: "Indicadores de inmunizaciones y salud pública." },
+            { id: 20, title: "SUSALUD - ACREDITACIÓN SIS", url: "http://www.susalud.gob.pe", desc: "Consulta de derechohabientes y aseguramiento en salud." }
+        ];
+
+        const hisCodes = [
+            { code: 'D50.9', title: 'Anemia por deficiencia de hierro no especificada' },
+            { code: 'Z00.1', title: 'Control de salud de rutina del niño (CRED)' },
+            { code: 'Z34.8', title: 'Supervisión de otro embarazo normal (CPN)' },
+            { code: 'J02.9', title: 'Faringitis aguda, no especificada' },
+            { code: 'J21.9', title: 'Bronquiolitis aguda (SOB)' },
+            { code: 'K52.9', title: 'Gastroenteritis y colitis no infecciosa (GEA)' },
+            { code: 'N39.0', title: 'Infección de vías urinarias (IVU)' },
+            { code: 'Z48.0', title: 'Atención de apósitos y suturas (Retiro de puntos)' }
+        ];
+
+        // State Store
+        let appState = {
+            streak: 1,
+            lastCheckin: '',
+            studyHours: 4,
+            sleepTime: '23:00',
+            wakeTime: '06:30',
+            waterCount: 4,
+            patients: [
+                { id: 1, name: 'Mateo Quispe (Pediátrico)', dni: '74839201', date: '2026-11-12', action: 'Retiro de puntos faciales (Día 4)', status: 'Pendiente' },
+                { id: 2, name: 'Rosa Flores (Gestante)', dni: '45920183', date: '2026-11-15', action: 'Control CPN 3er trimestre + Hb', status: 'Pendiente' }
+            ],
+            finances: [
+                { id: 1, desc: 'Sueldo SERUMS MINSA', amount: 5800, type: 'income', cat: 'Sueldo' },
+                { id: 2, desc: 'Alquiler Habitación Paucamarca', amount: 350, type: 'expense', cat: 'Alimentación' },
+                { id: 3, desc: 'Plan Bitel Teléfono', amount: 45, type: 'expense', cat: 'Servicios' }
+            ],
+            matrix: {
+                q1: ['Emergencia P.S. Paucamarca', 'Completar nominal Anemia'],
+                q2: ['Banqueo 30 preguntas RM 2027', 'Mazo Anki Anatomía'],
+                q3: ['Trámite documento Red San Marcos'],
+                q4: ['Redes sociales sin meta']
+            },
+            calendarEvents: [
+                { id: 1, title: 'Pagar alquiler del cuarto Paucamarca', date: '2026-11-15', cat: 'pago' },
+                { id: 2, title: 'Consolidado HIS MINSA mensual', date: '2026-11-30', cat: 'minsa' },
+                { id: 3, title: 'Simulacro RM 2027', date: '2026-11-20', cat: 'estudio' }
+            ],
+            historyLog: [
+                { day: 'Lun', study: 3, sleep: 7, water: 6, savings: 4800 },
+                { day: 'Mar', study: 4, sleep: 7.5, water: 8, savings: 4900 },
+                { day: 'Mié', study: 5, sleep: 6.5, water: 5, savings: 5000 },
+                { day: 'Jue', study: 3.5, sleep: 8, water: 7, savings: 5100 },
+                { day: 'Vie', study: 4.5, sleep: 7, water: 8, savings: 5200 },
+                { day: 'Sáb', study: 5, sleep: 8, water: 8, savings: 5300 },
+                { day: 'Dom', study: 4, sleep: 7.5, water: 4, savings: 5405 }
+            ],
+            currCalYear: 2026,
+            currCalMonth: 10 // November (0-indexed)
+        };
+
+        window.onload = function() {
+            const saved = localStorage.getItem('med_command_light_v3');
+            if (saved) {
+                try { appState = Object.assign(appState, JSON.parse(saved)); } catch (e) {}
+            }
+
+            updateTopBar();
+            setInterval(updateTopBar, 1000);
+
+            renderHabits();
+            renderPatientsTable();
+            renderFinances();
+            renderMatrix();
+            renderMinsaCards();
+            renderHisCodes();
+            runPediatricCalc();
+            renderCalendarGrid();
+            renderDashPreviews();
+            renderCharts();
+        };
+
+        function saveState() {
+            localStorage.setItem('med_command_light_v3', JSON.stringify(appState));
+        }
+
+        function toggleMobileSidebar() {
+            document.getElementById('appSidebar').classList.toggle('-translate-x-full');
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-panel').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.sidebar-btn').forEach(btn => btn.classList.remove('sidebar-item-active'));
+            
+            document.getElementById(tabId).classList.remove('hidden');
+            const btn = document.getElementById('btn-' + tabId);
+            if (btn) btn.classList.add('sidebar-item-active');
+
+            if (window.innerWidth < 1024) {
+                document.getElementById('appSidebar').classList.add('-translate-x-full');
+            }
+
+            if (tabId === 'tab-graficas') {
+                setTimeout(renderCharts, 100);
+            }
+        }
+
+        function updateTopBar() {
+            const now = new Date();
+            const h = now.getHours();
+            let greeting = 'Buenas noches';
+            if (h >= 5 && h < 12) greeting = 'Buenos días';
+            else if (h >= 12 && h < 19) greeting = 'Buenas tardes';
+
+            document.getElementById('topBarGreeting').textContent = greeting;
+            document.getElementById('topBarDate').textContent = now.toLocaleDateString('es-PE', { weekday: 'short', day: 'numeric', month: 'short' });
+
+            const examDate = new Date('2027-06-13');
+            const diffDays = Math.ceil((examDate - now) / (1000 * 60 * 60 * 24));
+            document.getElementById('topRmCountdown').textContent = `${diffDays > 0 ? diffDays : 0} días RM 2027`;
+        }
+
+        // HABITS & STREAK LOGIC
+        function renderHabits() {
+            document.getElementById('sidebarStreakCount').textContent = appState.streak;
+            document.getElementById('dashStreakDays').textContent = appState.streak;
+            document.getElementById('studyHoursVal').textContent = `${appState.studyHours} hrs`;
+            document.getElementById('inputStudyHours').value = appState.studyHours;
+            document.getElementById('inputSleepTime').value = appState.sleepTime || '23:00';
+            document.getElementById('inputWakeTime').value = appState.wakeTime || '06:30';
+
+            // Sleep calculation
+            const sParts = appState.sleepTime.split(':');
+            const wParts = appState.wakeTime.split(':');
+            let sleepHrs = (parseInt(wParts[0]) + parseInt(wParts[1])/60) - (parseInt(sParts[0]) + parseInt(sParts[1])/60);
+            if (sleepHrs < 0) sleepHrs += 24;
+            document.getElementById('sleepSummaryText').textContent = `${sleepHrs.toFixed(1)} hrs descanso`;
+
+            // Water icons
+            document.getElementById('waterCountText').textContent = appState.waterCount;
+            const waterDiv = document.getElementById('waterGlassesContainer');
+            waterDiv.innerHTML = '';
+            for (let i = 0; i < 8; i++) {
+                const filled = i < appState.waterCount;
+                waterDiv.innerHTML += `<i class="fa-solid fa-glass-water ${filled ? 'text-cyan-600' : 'text-slate-300'}"></i>`;
+            }
+        }
+
+        function doDailyCheckin() {
+            const todayStr = new Date().toISOString().slice(0, 10);
+            if (appState.lastCheckin === todayStr) {
+                showToast("¡Check-in de hoy ya fue registrado!");
+                return;
+            }
+            appState.streak++;
+            appState.lastCheckin = todayStr;
+            saveState();
+            renderHabits();
+            triggerAchievement("¡Check-in Cumplido!", "Has mantenido tu racha activa de estudio y servicio en Paucamarca.");
+        }
+
+        function saveHabitData() {
+            appState.studyHours = parseFloat(document.getElementById('inputStudyHours').value) || 0;
+            appState.sleepTime = document.getElementById('inputSleepTime').value;
+            appState.wakeTime = document.getElementById('inputWakeTime').value;
+            saveState();
+            renderHabits();
+            showToast("Datos de hábitos guardados.");
+        }
+
+        function updateWater(delta) {
+            appState.waterCount = Math.max(0, Math.min(8, appState.waterCount + delta));
+            saveState();
+            renderHabits();
+            if (appState.waterCount === 8) {
+                triggerAchievement("¡Meta de Hidratación!", "Completaste tus 8 vasos de agua del día.");
+            }
+        }
+
+        function triggerMascotClick() {
+            triggerAchievement("¡Motivación Asistencial!", "El estudio constante y el compromiso con tus pacientes marcan la diferencia.");
+        }
+
+        // SOLITARY ACHIEVEMENT POPUP
+        function triggerAchievement(title, msg) {
+            const quote = quotesPool[Math.floor(Math.random() * quotesPool.length)];
+            document.getElementById('achieveTitle').textContent = title;
+            document.getElementById('achieveQuoteText').textContent = `"${quote.quote}"`;
+            document.getElementById('achieveQuoteAuthor').textContent = `— ${quote.author}`;
+            
+            const modal = document.getElementById('achievementModal');
+            modal.classList.remove('hidden');
+        }
+
+        function closeAchievementModal() {
+            document.getElementById('achievementModal').classList.add('hidden');
+        }
+
+        // REAL GRID CALENDAR LOGIC
+        function renderCalendarGrid() {
+            const year = appState.currCalYear;
+            const month = appState.currCalMonth;
+            const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            
+            document.getElementById('calendarMonthTitle').textContent = `${monthNames[month]} ${year}`;
+
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            // Blank tiles for alignment
+            for (let i = 0; i < firstDayIndex; i++) {
+                grid.innerHTML += `<div class="bg-slate-100/50 rounded-xl calendar-day-tile border border-slate-100"></div>`;
+            }
+
+            // Month days
+            const todayStr = new Date().toISOString().slice(0,10);
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                const isToday = dateStr === todayStr;
+
+                const dayEvents = (appState.calendarEvents || []).filter(e => e.date === dateStr);
+                let eventsHTML = dayEvents.map(e => `
+                    <div class="text-[9px] px-1.5 py-0.5 rounded font-bold truncate bg-purple-100 text-purple-800 border border-purple-200">
+                        ${e.title}
+                    </div>
+                `).join('');
+
+                grid.innerHTML += `
+                    <div onclick="selectCalendarDate('${dateStr}')" class="bg-white rounded-xl p-1.5 calendar-day-tile border ${isToday ? 'border-2 border-sky-600 bg-sky-50/50' : 'border-slate-200'} cursor-pointer flex flex-col justify-between">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold font-mono text-xs ${isToday ? 'text-sky-700' : 'text-slate-800'}">${day}</span>
+                            ${dayEvents.length > 0 ? '<span class="w-2 h-2 rounded-full bg-purple-600"></span>' : ''}
+                        </div>
+                        <div class="space-y-1 overflow-hidden mt-1">
+                            ${eventsHTML}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function prevCalendarMonth() {
+            appState.currCalMonth--;
+            if (appState.currCalMonth < 0) { appState.currCalMonth = 11; appState.currCalYear--; }
+            renderCalendarGrid();
+        }
+
+        function nextCalendarMonth() {
+            appState.currCalMonth++;
+            if (appState.currCalMonth > 11) { appState.currCalMonth = 0; appState.currCalYear++; }
+            renderCalendarGrid();
+        }
+
+        function openAddEventModal() { document.getElementById('addEventModal').classList.remove('hidden'); }
+        function closeAddEventModal() { document.getElementById('addEventModal').classList.add('hidden'); }
+
+        function selectCalendarDate(dateStr) {
+            document.getElementById('evDate').value = dateStr;
+            openAddEventModal();
+        }
+
+        function saveCalendarEvent(e) {
+            e.preventDefault();
+            const newEv = {
+                id: Date.now(),
+                title: document.getElementById('evTitle').value.trim(),
+                date: document.getElementById('evDate').value,
+                cat: document.getElementById('evCat').value
+            };
+            if (!appState.calendarEvents) appState.calendarEvents = [];
+            appState.calendarEvents.push(newEv);
+            saveState();
+            closeAddEventModal();
+            renderCalendarGrid();
+            renderDashPreviews();
+            showToast("Evento agregado al calendario.");
+        }
+
+        // CANVAS HISTORICAL CHARTS LOGIC
+        function renderCharts() {
+            const data = appState.historyLog || [];
+            const labels = data.map(d => d.day);
+
+            drawLineChart('chartStudy', labels, data.map(d => d.study), '#9333ea');
+            drawLineChart('chartSleep', labels, data.map(d => d.sleep), '#0284c7');
+            drawLineChart('chartWater', labels, data.map(d => d.water), '#0891b2');
+            drawLineChart('chartSavings', labels, data.map(d => d.savings), '#059669');
+        }
+
+        function drawLineChart(canvasId, labels, values, strokeColor) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size for DPI crispness
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+
+            const w = canvas.width;
+            const h = canvas.height;
+            const padding = 25;
+
+            ctx.clearRect(0, 0, w, h);
+
+            if (values.length === 0) return;
+
+            const minVal = Math.min(...values) * 0.8;
+            const maxVal = Math.max(...values) * 1.2 || 10;
+
+            // Draw line
+            ctx.beginPath();
+            ctx.strokeStyle = strokeColor;
+            ctx.lineWidth = 3;
+
+            const step = (w - padding * 2) / (values.length - 1);
+
+            values.forEach((v, i) => {
+                const x = padding + i * step;
+                const y = h - padding - ((v - minVal) / (maxVal - minVal)) * (h - padding * 2);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+
+            // Draw Points
+            values.forEach((v, i) => {
+                const x = padding + i * step;
+                const y = h - padding - ((v - minVal) / (maxVal - minVal)) * (h - padding * 2);
+
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.strokeStyle = strokeColor;
+                ctx.lineWidth = 2;
+                ctx.fill();
+                ctx.stroke();
+
+                // Labels
+                ctx.fillStyle = '#64748b';
+                ctx.font = '10px Cabin';
+                ctx.textAlign = 'center';
+                ctx.fillText(labels[i], x, h - 5);
+                ctx.fillText(v, x, y - 8);
+            });
+        }
+
+        // PATIENTS AGENDA
+        function renderPatientsTable() {
+            const tbody = document.getElementById('patientsTableBody');
+            const search = (document.getElementById('patientSearch')?.value || '').toLowerCase();
+            tbody.innerHTML = '';
+
+            const list = appState.patients.filter(p => p.name.toLowerCase().includes(search) || p.dni.includes(search));
+            document.getElementById('badgePatientsCount').textContent = list.length;
+
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-slate-400">No hay pacientes citados.</td></tr>`;
+                return;
+            }
+
+            list.forEach(p => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="py-2.5 px-3 font-bold text-slate-900">${p.name}</td>
+                        <td class="py-2.5 px-3 font-mono text-slate-600">${p.dni || 'S/D'}</td>
+                        <td class="py-2.5 px-3 font-mono text-sky-700">${p.date}</td>
+                        <td class="py-2.5 px-3 text-slate-700">${p.action}</td>
+                        <td class="py-2.5 px-3 text-center">
+                            <button onclick="togglePatientStatus(${p.id})" class="px-2 py-0.5 rounded-full text-[10px] font-bold ${p.status === 'Atendido' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">
+                                ${p.status}
+                            </button>
+                        </td>
+                        <td class="py-2.5 px-3 text-center">
+                            <button onclick="deletePatient(${p.id})" class="text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            renderDashPreviews();
+        }
+
+        function addPatientRecord(e) {
+            e.preventDefault();
+            const newP = {
+                id: Date.now(),
+                name: document.getElementById('pName').value.trim(),
+                dni: document.getElementById('pDni').value.trim(),
+                date: document.getElementById('pDate').value,
+                action: document.getElementById('pAction').value.trim(),
+                status: 'Pendiente'
+            };
+            appState.patients.unshift(newP);
+            saveState();
+            document.getElementById('addPatientForm').reset();
+            renderPatientsTable();
+            showToast("Paciente registrado.");
+        }
+
+        function togglePatientStatus(id) {
+            const p = appState.patients.find(x => x.id === id);
+            if (p) {
+                p.status = p.status === 'Pendiente' ? 'Atendido' : 'Pendiente';
+                saveState();
+                renderPatientsTable();
+            }
+        }
+
+        function deletePatient(id) {
+            appState.patients = appState.patients.filter(x => x.id !== id);
+            saveState();
+            renderPatientsTable();
+        }
+
+        // FINANCES LOGIC
+        function renderFinances() {
+            let totalIn = 0;
+            let totalOut = 0;
+            const catSums = {};
+
+            appState.finances.forEach(t => {
+                if (t.type === 'income') totalIn += t.amount;
+                else {
+                    totalOut += t.amount;
+                    catSums[t.cat] = (catSums[t.cat] || 0) + t.amount;
+                }
+            });
+
+            document.getElementById('finIncomeVal').textContent = `S/ ${totalIn.toFixed(2)}`;
+            document.getElementById('finExpenseVal').textContent = `S/ ${totalOut.toFixed(2)}`;
+            document.getElementById('finBalanceVal').textContent = `S/ ${(totalIn - totalOut).toFixed(2)}`;
+
+            const bars = document.getElementById('categoryBarsContainer');
+            bars.innerHTML = '';
+            ['Alimentación', 'Transporte', 'Servicios', 'Salud', 'Gustos', 'Cursos', 'Otros'].forEach(cat => {
+                const spent = catSums[cat] || 0;
+                const pct = totalOut > 0 ? Math.min(100, Math.round((spent / totalOut) * 100)) : 0;
+                bars.innerHTML += `
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-700 font-medium">${cat}</span>
+                            <span class="font-mono text-slate-500">S/ ${spent.toFixed(2)} (${pct}%)</span>
+                        </div>
+                        <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                            <div class="bg-amber-500 h-full rounded-full" style="width: ${pct}%"></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            const hist = document.getElementById('txHistoryContainer');
+            hist.innerHTML = '';
+            appState.finances.forEach(t => {
+                hist.innerHTML += `
+                    <div class="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 text-xs">
+                        <div>
+                            <div class="font-bold text-slate-900">${t.desc}</div>
+                            <span class="text-[10px] text-slate-400">${t.cat}</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-mono font-bold ${t.type === 'income' ? 'text-emerald-700' : 'text-rose-700'}">
+                                ${t.type === 'income' ? '+' : '-'} S/ ${t.amount.toFixed(2)}
+                            </span>
+                            <button onclick="deleteTx(${t.id})" class="text-slate-400 hover:text-rose-600"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function addTxRecord(e) {
+            e.preventDefault();
+            const newTx = {
+                id: Date.now(),
+                desc: document.getElementById('txDesc').value.trim(),
+                amount: parseFloat(document.getElementById('txAmount').value) || 0,
+                type: document.getElementById('txType').value,
+                cat: document.getElementById('txCat').value
+            };
+            appState.finances.unshift(newTx);
+            saveState();
+            document.getElementById('addTxForm').reset();
+            renderFinances();
+            showToast("Transacción registrada.");
+        }
+
+        function deleteTx(id) {
+            appState.finances = appState.finances.filter(x => x.id !== id);
+            saveState();
+            renderFinances();
+        }
+
+        // EISENHOWER MATRIX
+        function renderMatrix() {
+            ['q1', 'q2', 'q3', 'q4'].forEach(qKey => {
+                const box = document.getElementById(`matrix-${qKey}`);
+                box.innerHTML = '';
+                (appState.matrix[qKey] || []).forEach((item, idx) => {
+                    box.innerHTML += `
+                        <div class="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 text-xs">
+                            <span class="text-slate-800">${item}</span>
+                            <button onclick="deleteMatrixItem('${qKey}', ${idx})" class="text-slate-400 hover:text-rose-600 ml-2"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        function addMatrixItem(qKey) {
+            const task = prompt("Ingrese la actividad:");
+            if (task && task.trim()) {
+                if (!appState.matrix[qKey]) appState.matrix[qKey] = [];
+                appState.matrix[qKey].push(task.trim());
+                saveState();
+                renderMatrix();
+            }
+        }
+
+        function deleteMatrixItem(qKey, idx) {
+            appState.matrix[qKey].splice(idx, 1);
+            saveState();
+            renderMatrix();
+        }
+
+        // MINSA & CLINICAL
+        function renderMinsaCards() {
+            const container = document.getElementById('minsaCardsContainer');
+            const search = (document.getElementById('minsaSearch')?.value || '').toLowerCase();
+            container.innerHTML = '';
+
+            const list = defaultMinsaCards.filter(c => c.title.toLowerCase().includes(search));
+            list.forEach(c => {
+                container.innerHTML += `
+                    <div class="bg-white rounded-2xl p-4 border border-slate-200 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <span class="font-mono font-bold text-xs bg-slate-100 text-slate-700 px-2 py-0.5 rounded">#${c.id}</span>
+                                <span class="text-[9px] font-bold uppercase bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full">MINSA</span>
+                            </div>
+                            <h3 class="font-bold text-xs text-slate-900 mt-2">${c.title}</h3>
+                            <p class="text-[11px] text-slate-500 mt-1">${c.desc}</p>
+                        </div>
+                        <a href="${c.url}" target="_blank" class="w-full py-1.5 bg-slate-100 hover:bg-sky-600 hover:text-white text-slate-700 font-semibold text-xs rounded-xl border border-slate-300 text-center transition-all">
+                            Ingresar al Portal &rarr;
+                        </a>
+                    </div>
+                `;
+            });
+        }
+
+        function runPediatricCalc() {
+            const w = parseFloat(document.getElementById('pedWeight').value) || 10;
+            const drug = document.getElementById('pedDrug').value;
+            const res = document.getElementById('pedCalcResultCard');
+
+            let title = '';
+            let detail = '';
+
+            if (drug === 'paracetamol') {
+                title = 'Paracetamol Gotas (100 mg/ml)';
+                detail = `Dosificación: 10-15 mg/kg/dosis. Prescribir <strong>${Math.round(w * 1)} gotas</strong> c/6 horas.`;
+            } else if (drug === 'ibuprofeno') {
+                title = 'Ibuprofeno Jarabe (100 mg/5ml)';
+                detail = `Dosificación: 10 mg/kg/dosis. Prescribir <strong>${((w * 10) / 20).toFixed(1)} ml</strong> c/8 horas.`;
+            } else if (drug === 'amoxicilina') {
+                title = 'Amoxicilina Jarabe (250 mg/5ml)';
+                detail = `Dosificación: 50 mg/kg/día. Prescribir <strong>${((w * 50) / 50).toFixed(1)} ml</strong> c/8 horas.`;
+            } else if (drug === 'azitromicina') {
+                title = 'Azitromicina Jarabe (200 mg/5ml)';
+                detail = `Dosificación: 10 mg/kg/día. Prescribir <strong>${((w * 10) / 40).toFixed(1)} ml</strong> 1 vez/día por 3 días.`;
+            } else {
+                title = 'Sulfato Ferroso Gotas (Tratamiento Anemia 3 mg/kg/día)';
+                detail = `Prescribir <strong>${Math.round(((w * 3) / 25) * 20)} gotas</strong> en 1 sola toma diaria por 6 meses.`;
+            }
+
+            res.innerHTML = `
+                <div class="font-bold text-xs text-sky-800">${title}</div>
+                <p class="text-xs text-slate-700 leading-relaxed">${detail}</p>
+            `;
+        }
+
+        function renderHisCodes() {
+            const container = document.getElementById('hisCodesContainer');
+            const search = (document.getElementById('hisSearchInput')?.value || '').toLowerCase();
+            container.innerHTML = '';
+            hisCodes.filter(h => h.code.toLowerCase().includes(search) || h.title.toLowerCase().includes(search)).forEach(h => {
+                container.innerHTML += `
+                    <div class="p-2 rounded-xl bg-white border border-slate-200 flex items-center justify-between text-xs">
+                        <span class="text-slate-800">${h.title}</span>
+                        <span class="font-mono font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">${h.code}</span>
+                    </div>
+                `;
+            });
+        }
+
+        function renderDashPreviews() {
+            const pBox = document.getElementById('dashPatientsPreviewList');
+            pBox.innerHTML = '';
+            appState.patients.slice(0,3).forEach(p => {
+                pBox.innerHTML += `
+                    <div class="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 text-xs">
+                        <div>
+                            <div class="font-bold text-slate-900">${p.name}</div>
+                            <div class="text-[10px] text-slate-500">${p.action}</div>
+                        </div>
+                        <span class="font-mono text-sky-700 font-bold">${p.date}</span>
+                    </div>
+                `;
+            });
+
+            const rBox = document.getElementById('dashRemindersPreviewList');
+            rBox.innerHTML = '';
+            (appState.calendarEvents || []).slice(0,3).forEach(r => {
+                rBox.innerHTML += `
+                    <div class="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 text-xs">
+                        <div class="font-medium text-slate-800">${r.title}</div>
+                        <span class="font-mono text-purple-700 font-bold text-[10px]">${r.date}</span>
+                    </div>
+                `;
+            });
+        }
+
+        // PORTABILITY
+        function exportJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+            const anchor = document.createElement('a');
+            anchor.setAttribute("href", dataStr);
+            anchor.setAttribute("download", `MED_COMMAND_V3_BACKUP_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(anchor);
+            anchor.click();
+            anchor.remove();
+            showToast("Backup JSON exportado.");
+        }
+
+        function importJSON(event) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data && typeof data === 'object') {
+                        appState = Object.assign(appState, data);
+                        saveState();
+                        location.reload();
+                    }
+                } catch (err) {
+                    alert("Error al importar JSON.");
+                }
+            };
+            fileReader.readAsText(event.target.files[0]);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('appToast');
+            document.getElementById('toastMsg').textContent = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
